@@ -1,0 +1,354 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+1. Preprocessing 
+ check missing values
+ check data types
+ *extract categorical columns from some continous variables (CTR, Conversion Rate) if distribution is skewed
+ 
+2. EDA 
+ summary statistics for numerical variables
+ visualize distribution of key metrics (CTR, Conversion Rate, Bounce Rate, Scroll Depth, Session Duration)
+ Examine categorical variable distributions (Purchases , added to cart, location)
+ check outliers in numerical columns
+ 
+2. Visualizations
+ Compare proportions of purchases, added to cart, and categorized columns - bar chart
+ Visualize distribution of Scroll Depth, Session duration by theme - boxplot
+ density distribution of numerical variables - histogram and KDE plots
+ 
+4. Hypothesis Testing 
+ 2-sample proportion for binary categorical variables (purchases, added to cart, *CTR, *conversion rate)
+ t-test or mann whitney u for continouse variables  (scroll depth, session duration)
+ 
+ 
+
+
+
+
+
+
+
+
+
+```{r}
+library(tidyverse)
+library(skimr)
+library(ggExtra)
+```
+```{r}
+data <- read_csv('website_ab_test.csv')
+```
+
+
+```{r}
+glimpse(data)
+skim(data)
+```
+
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+```{r}
+#rename numerical columns
+names <- c(Click_Through_Rate = 'Click Through Rate', Conversion_Rate = 'Conversion Rate', Bounce_Rate = 'Bounce Rate')
+data <- data %>% rename(all_of(names))
+
+#change character columns to factor
+data[, sapply(data, is.character)] <- lapply(data[, sapply(data, is.character)], as.factor)
+```
+
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+
+```{r}
+# Define a color palette
+palette <- c("#1b9e77", "#d95f02") # Adjust colors as needed
+
+data %>%
+  ggplot(aes(Click_Through_Rate, fill = Theme)) +
+  geom_histogram(color = 'black', bins = 30, alpha = 0.7) +
+  scale_fill_manual(values = palette) +
+  theme_minimal() +
+  labs(title = "Click Through Rate Distribution", x = "CTR", y = "Frequency")
+
+data %>%
+  ggplot(aes(Conversion_Rate, fill = Theme)) +
+  geom_histogram(color = 'black', bins = 30, alpha = 0.7) +
+  scale_fill_manual(values = palette) +
+  theme_minimal() +
+  labs(title = "Conversion Rate Distribution", x = "Conversion Rate", y = "Frequency")
+
+data %>%
+  ggplot(aes(Bounce_Rate, fill = Theme)) +
+  geom_histogram(color = 'black', bins = 30, alpha = 0.7) +
+  scale_fill_manual(values = palette) +
+  theme_minimal() +
+  labs(title = "Bounce Rate Distribution", x = "Bounce Rate", y = "Frequency")
+
+sd_histo <- data %>%
+  ggplot(aes(Scroll_Depth, fill = Theme)) +
+  geom_histogram(color = 'black', bins = 30, alpha = 0.7) +
+  scale_fill_manual(values = palette) +
+  theme_minimal() +
+  labs(title = "Scroll Depth Distribution", x = "Scroll Depth", y = "Frequency")
+
+data %>%
+  ggplot(aes(Session_Duration, fill = Theme)) +
+  geom_histogram(color = 'black', bins = 30, alpha = 0.7) +
+  scale_fill_manual(values = palette) +
+  theme_minimal() +
+  labs(title = "Session Duration Distribution", x = "Session Duration", y = "Frequency")
+
+# Arrange plots in a 2-column layout for better visualization
+#grid.arrange(ctr_histo, cr_histo, br_histo, sd_histo, ssd_histo, ncol = 2)
+```
+
+
+
+```{r}
+ctr_histo <- data %>%  ggplot(aes(Click_Through_Rate, fill = Theme)) +
+  geom_histogram( color = 'black') +
+  theme_hc() + 
+  labs(y = NULL)
+
+cr_histo <- data %>%  ggplot(aes(Conversion_Rate, fill =  Theme)) +
+  geom_histogram( color = 'black') +
+  theme_hc() + 
+  labs(y = NULL)
+
+br_histo <- data %>%  ggplot(aes(Bounce_Rate, fill = Theme)) +
+  geom_histogram(color = 'black') +
+  theme_hc() + 
+  labs(y = NULL)
+
+sd_histo <- data %>%  ggplot(aes(Scroll_Depth, fill = Theme)) +
+  geom_histogram(color = 'black') +
+  theme_hc() + 
+  labs(y = NULL)
+
+ssd_histo <- data %>%  ggplot(aes(Session_Duration, fill =  Theme)) +
+  geom_histogram(color = 'black') +
+  theme_hc() + 
+  labs(y = NULL)
+
+grid.arrange(ctr_histo, cr_histo, br_histo, sd_histo, ssd_histo, ncol = 3)
+```
+
+
+
+
+
+```{r}
+data %>% ggplot(aes(Theme,Session_Duration, fill =  Theme)) +
+  geom_boxplot(orientation = 'x') +
+  stat_summary(fun= 'mean') +
+  theme_hc()
+
+
+data %>% ggplot(aes(Theme,Scroll_Depth, fill = Theme)) +
+  geom_boxplot(orientation = 'x') +
+  stat_summary(fun= 'mean') +
+  theme_hc()
+
+
+data %>% ggplot(aes(Theme,Conversion_Rate,fill = Theme)) +
+  geom_boxplot(orientation = 'x') +
+  stat_summary(fun= 'mean') +
+  theme_hc()
+
+
+
+
+
+
+
+
+```
+
+```{r}
+
+# Boxplot for Session Duration
+ggplot(data, aes(Theme, Session_Duration, fill = Theme)) +
+  geom_boxplot(alpha = 0.7, show.legend = FALSE) +
+  scale_fill_manual(values = palette) +
+  theme_minimal() +
+  labs(title = "Session Duration by Theme", x = "Theme", y = "Session Duration")
+
+# Boxplot for Scroll Depth
+ggplot(data, aes(Theme, Scroll_Depth, fill = Theme)) +
+  geom_boxplot(alpha = 0.7, show.legend = FALSE) +
+  scale_fill_manual(values = palette) +
+  theme_minimal() +
+  labs(title = "Scroll Depth by Theme", x = "Theme", y = "Scroll Depth")
+
+# Boxplot for Conversion Rate
+ggplot(data, aes(Theme, Conversion_Rate, fill = Theme)) +
+  geom_boxplot(alpha = 0.7, show.legend = FALSE) +
+  scale_fill_manual(values = palette) +
+  theme_minimal() +
+  labs(title = "Conversion Rate by Theme", x = "Theme", y = "Conversion Rate")
+```
+
+
+
+
+```{r}
+# Bar plot for Purchases by Theme
+data %>%  ggplot(aes(Purchases, fill = Theme)) +
+  geom_bar(position = "dodge", width = 0.7, alpha = 0.7) +
+  scale_fill_manual(values = palette) +
+  labs(title = "NUMBER OF PURCHASES BY THEME", x = "PURCHASES") +
+  geom_text(
+           stat = "count", 
+           aes(label = after_stat(count)),
+           position = position_dodge(width = 0.7),
+           vjust = -0.5) +
+  theme_minimal() +
+  theme(plot.title = element_text(
+                     size = 16,
+                     face = "bold",
+                     color = "black",
+                     hjust = 0.7, vjust = 0.9,       # this Center the title
+                     margin = margin(t = 2, b = 15)), 
+        axis.title.x = element_text(
+                       size = 13,
+                       face = "bold"),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(), #removes y axis properties
+        axis.title.y = element_blank(), 
+        panel.grid = element_blank())
+
+# Bar plot for Added to Cart
+data %>%  ggplot(aes(Added_to_Cart, fill = Theme)) +
+  scale_fill_manual(values = palette) +
+  geom_bar(position = "dodge", width = 0.7, alpha = 0.7) +
+  labs(title = "NUMBER OF CARTS ADDITION BY THEME",x = "ADDED TO CART") +
+  geom_text(
+           stat = "count", 
+           aes(label = after_stat(count)),
+           position = position_dodge(width = 0.7),
+           vjust = -0.5) +
+  theme_minimal() +
+  theme(plot.title = element_text(
+                     size = 16,
+                     face = "bold",
+                     color = "black",
+                     hjust = 0.7, vjust = 0.9,       # this Center the title
+                     margin = margin(t = 2, b = 15)), 
+        axis.title.x = element_text(
+                       size = 13,
+                       face = "bold"),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(), 
+        axis.title.y = element_blank(), 
+        panel.grid = element_blank())
+```
+
+
+
+STATISTICAL TESTS
+
+```{r}
+light_theme_data <- data %>%  filter(Theme == 'Light Theme')
+dark_theme_data <- data %>%  filter(Theme == 'Dark Theme')
+```
+
+```{r}
+#check 2-sample proportion test for purchases 
+prop_dark_purchase = dark_theme_data %>%  
+            filter(Purchases == 'Yes') %>%  
+            nrow()
+n_dark_purchase = nrow(dark_theme_data)
+
+prop_light_purchase = light_theme_data %>%
+             filter(Purchases == 'Yes') %>%
+             nrow()
+n_light_purchase =  nrow(light_theme_data)
+
+purchase_test <- prop.test(x = c(prop_dark_purchase, prop_light_purchase), n = c(n_dark_purchase, n_light_purchase), correct = FALSE)
+```
+
+```{r}
+#check 2-sample proportion test for added to cart
+prop_dark_cart = dark_theme_data %>%  
+            filter(Added_to_Cart == 'Yes') %>%  
+            nrow()
+n_dark_cart = nrow(dark_theme_data)
+
+prop_light_cart = light_theme_data %>%
+             filter(Added_to_Cart == 'Yes') %>%
+             nrow()
+n_light_cart =  nrow(light_theme_data)
+
+cart_test <- prop.test(x = c(prop_dark_cart, prop_light_cart), n = c(n_dark_cart, n_light_cart), correct = FALSE)
+```
+
+
+TEST FOR NORMALITY FOR SESSION DURATION AND SCROLL DEPTH
+
+```{r}
+shapiro.test(light_theme_data$Session_Duration)
+shapiro.test(dark_theme_data$Session_Duration)
+
+shapiro.test(light_theme_data$Scroll_Depth)
+shapiro.test(dark_theme_data$Scroll_Depth)
+```
+
+```{r}
+qqnorm(light_theme_data$Session_Duration)
+qqline(light_theme_data$Session_Duration, col = "red")
+
+qqnorm(dark_theme_data$Session_Duration)
+qqline(dark_theme_data$Session_Duration, col = "red")
+```
+
+```{r}
+wilcox.test(light_theme_data$Session_Duration, dark_theme_data$Session_Duration, correct = TRUE)
+wilcox.test(light_theme_data$Scroll_Depth, dark_theme_data$Scroll_Depth,correct = FALSE)
+```
+
+```{r}
+ check_qqplot <- function(x) {
+   qqnorm(x)
+   qqline(x, col = "red")
+ }
+```
+
+
+```{r}
+check_qqplot(dark_theme_data$Scroll_Depth)
+```
+
+
+```{r}
+data %>% ggplot(aes(Conversion_Rate, Click_Through_Rate)) +
+  geom_point(aes(colour = Theme)) +
+  geom_smooth(method = 'lm') +
+  theme_hc()
+```
+
+
+
+```{r}
+
+```
+
