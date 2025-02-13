@@ -20,7 +20,7 @@ output: html_notebook
  
 4. Hypothesis Testing 
  2-sample proportion for binary categorical variables (purchases, added to cart, *CTR, *conversion rate)
- t-test or mann whitney u for continouse variables  (scroll depth, session duration)
+ t-test or mann-whitney u for continuous variables  (scroll depth, session duration)
  
  
 
@@ -50,18 +50,6 @@ skim(data)
 ```
 
 
-
-```{r}
-```
-
-
-```{r}
-```
-
-
-```{r}
-```
-
 ```{r}
 #rename numerical columns
 names <- c(Click_Through_Rate = 'Click Through Rate', Conversion_Rate = 'Conversion Rate', Bounce_Rate = 'Bounce Rate')
@@ -87,7 +75,7 @@ palette <- c("#1b9e77", "#d95f02") # Adjust colors as needed
 
 data %>%
   ggplot(aes(Click_Through_Rate, fill = Theme)) +
-  geom_histogram(color = 'black', bins = 30, alpha = 0.7) +
+  geom_histogram(color = 'black', bins = 30, alpha = 0.7, position = "dodge") +
   scale_fill_manual(values = palette) +
   theme_minimal() +
   labs(title = "Click Through Rate Distribution", x = "CTR", y = "Frequency") +
@@ -105,7 +93,7 @@ data %>%
 
 data %>%
   ggplot(aes(Conversion_Rate, fill = Theme)) +
-  geom_histogram(color = 'black', bins = 30, alpha = 0.7) +
+  geom_histogram(color = 'black', bins = 30, alpha = 0.7, position = "dodge") +
   scale_fill_manual(values = palette) +
   theme_minimal() +
   labs(title = "Conversion Rate Distribution", x = "Conversion Rate", y = "Frequency") +
@@ -123,7 +111,7 @@ data %>%
 
 data %>%
   ggplot(aes(Bounce_Rate, fill = Theme)) +
-  geom_histogram(color = 'black', bins = 30, alpha = 0.7) +
+  geom_histogram(color = 'black', bins = 30, alpha = 0.7, position = "dodge") +
   scale_fill_manual(values = palette) +
   theme_minimal() +
   labs(title = "Bounce Rate Distribution", x = "Bounce Rate", y = "Frequency") +
@@ -142,7 +130,7 @@ data %>%
 
 data %>%
   ggplot(aes(Scroll_Depth, fill = Theme)) +
-  geom_histogram(color = 'black', bins = 30, alpha = 0.7) +
+  geom_histogram(color = 'black', bins = 30, alpha = 0.7, position = "dodge") +
   scale_fill_manual(values = palette) +
   theme_minimal() +
   labs(title = "Scroll Depth Distribution", x = "Scroll Depth", y = "Frequency") +
@@ -160,7 +148,7 @@ data %>%
 
 data %>%
   ggplot(aes(Session_Duration, fill = Theme)) +
-  geom_histogram(color = 'black', bins = 30, alpha = 0.7) +
+  geom_histogram(color = 'black', bins = 30, alpha = 0.7, position = "dodge") +
   scale_fill_manual(values = palette) +
   theme_minimal() +
   labs(title = "Session Duration Distribution", x = "Session Duration", y = "Frequency") +
@@ -267,7 +255,7 @@ data %>%  ggplot(aes(Purchases, fill = Theme)) +
                      face = "bold",
                      color = "black",
                      hjust = 0.7, vjust = 0.9,       # this Center the title
-                     margin = margin(t = 2, b = 15)), 
+                     margin = margin(t = 2, b = 10)), 
         axis.title.x = element_text(
                        size = 13,
                        ),
@@ -292,7 +280,7 @@ data %>%  ggplot(aes(Added_to_Cart, fill = Theme)) +
                      face = "bold",
                      color = "black",
                      hjust = 0.7, vjust = 0.9,       # this Center the title
-                     margin = margin(t = 2, b = 15)), 
+                     margin = margin(t = 2, b = 10)), 
         axis.title.x = element_text(
                        size = 13,
                        ),
@@ -302,6 +290,31 @@ data %>%  ggplot(aes(Added_to_Cart, fill = Theme)) +
         panel.grid = element_blank())
 ```
 
+```{r}
+data %>%  ggplot(aes(Location, fill = Theme)) +
+  scale_fill_manual(values = palette) +
+  geom_bar(position = "dodge", width = 0.7, alpha = 0.7) +
+  labs(title = "USER LOCATION BY THEME",x = "Location") +
+  geom_text(
+           stat = "count", 
+           aes(label = after_stat(count)),
+           position = position_dodge(width = 0.7),
+           vjust = -0.5) +
+  theme_minimal() +
+  theme(plot.title = element_text(
+                     size = 16,
+                     face = "bold",
+                     color = "black",
+                     hjust = 0.7, vjust = 0.9,       # this Center the title
+                     margin = margin(t = 2, b = 10)), #Set the margin of title
+        axis.title.x = element_text(
+                       size = 13,
+                       ),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(), 
+        axis.title.y = element_blank(), 
+        panel.grid = element_blank())
+```
 
 
 STATISTICAL TESTS
@@ -342,24 +355,61 @@ cart_test <- prop.test(x = c(prop_dark_cart, prop_light_cart), n = c(n_dark_cart
 ```
 
 
+```{r}
+purchase_test
+cart_test
+```
+
+
 TEST FOR NORMALITY FOR SESSION DURATION AND SCROLL DEPTH
 
 ```{r}
-#shapiro wilk test fpr normality
-shapiro.test(light_theme_data$Session_Duration)
-shapiro.test(dark_theme_data$Session_Duration)
+normality_test <- function(x) {
+  result <- shapiro.test(x)
+  tidy_result <- broom::tidy(result)
+  return(paste("The shapiro test p-value of", deparse(substitute(x)), "is", tidy_result$p.value))
+}
 
-shapiro.test(light_theme_data$Scroll_Depth)
-shapiro.test(dark_theme_data$Scroll_Depth)
+check_qqplot <- function(x) {
+   qqnorm(x, ,main = NULL)
+   qqline(x, col = "red")
+   title(main = deparse(substitute(x)))
+ }
+
+```
+
+
+
+
+
+```{r}
+#shapiro-wilk test for normality
+normality_test(dark_theme_data$Scroll_Depth)
+normality_test(dark_theme_data$Click_Through_Rate)
+normality_test(dark_theme_data$Conversion_Rate)
+normality_test(dark_theme_data$Bounce_Rate)
+normality_test(dark_theme_data$Session_Duration)
+normality_test(light_theme_data$Scroll_Depth)
+normality_test(light_theme_data$Click_Through_Rate)
+normality_test(light_theme_data$Conversion_Rate)
+normality_test(light_theme_data$Bounce_Rate)
+normality_test(light_theme_data$Session_Duration)
+
 ```
 
 ```{r}
 #Q-Q plot check for normality
-qqnorm(light_theme_data$Session_Duration)
-qqline(light_theme_data$Session_Duration, col = "red")
+check_qqplot(dark_theme_data$Scroll_Depth)
+check_qqplot(dark_theme_data$Click_Through_Rate)
+check_qqplot(dark_theme_data$Conversion_Rate)
+check_qqplot(dark_theme_data$Bounce_Rate)
+check_qqplot(dark_theme_data$Session_Duration)
+check_qqplot(light_theme_data$Scroll_Depth)
+check_qqplot(light_theme_data$Click_Through_Rate)
+check_qqplot(light_theme_data$Conversion_Rate)
+check_qqplot(light_theme_data$Bounce_Rate)
+check_qqplot(light_theme_data$Session_Duration)
 
-qqnorm(dark_theme_data$Session_Duration)
-qqline(dark_theme_data$Session_Duration, col = "red")
 ```
 
 ```{r}
@@ -369,24 +419,17 @@ wilcox.test(light_theme_data$Scroll_Depth, dark_theme_data$Scroll_Depth,correct 
 ```
 
 ```{r}
- check_qqplot <- function(x) {
-   qqnorm(x)
-   qqline(x, col = "red")
- }
+
 ```
 
 
 ```{r}
-check_qqplot(dark_theme_data$Scroll_Depth)
+
+
 ```
 
 
-```{r}
-data %>% ggplot(aes(Conversion_Rate, Click_Through_Rate)) +
-  geom_point(aes(colour = Theme)) +
-  geom_smooth(method = 'lm') +
-  theme_hc()
-```
+
 
 
 
