@@ -37,6 +37,8 @@ library(tidyverse)
 library(skimr)
 library(ggExtra)
 ```
+
+
 ```{r}
 data <- read_csv('website_ab_test.csv')
 ```
@@ -88,35 +90,91 @@ data %>%
   geom_histogram(color = 'black', bins = 30, alpha = 0.7) +
   scale_fill_manual(values = palette) +
   theme_minimal() +
-  labs(title = "Click Through Rate Distribution", x = "CTR", y = "Frequency")
+  labs(title = "Click Through Rate Distribution", x = "CTR", y = "Frequency") +
+   theme(plot.title = element_text(
+                     size = 16,
+                     face = "bold",
+                     color = "black",
+                     hjust = 0.4, vjust = 0.9,       # this Center the title
+                     margin = margin(t = 2, b = 15)), 
+        axis.title.x = element_text(
+                       size = 13
+                       ),
+        axis.title.y = element_text(
+                       size = 13))
 
 data %>%
   ggplot(aes(Conversion_Rate, fill = Theme)) +
   geom_histogram(color = 'black', bins = 30, alpha = 0.7) +
   scale_fill_manual(values = palette) +
   theme_minimal() +
-  labs(title = "Conversion Rate Distribution", x = "Conversion Rate", y = "Frequency")
+  labs(title = "Conversion Rate Distribution", x = "Conversion Rate", y = "Frequency") +
+   theme(plot.title = element_text(
+                     size = 16,
+                     face = "bold",
+                     color = "black",
+                     hjust = 0.4, vjust = 0.9,       # this Center the title
+                     margin = margin(t = 2, b = 15)), 
+        axis.title.x = element_text(
+                       size = 13
+                       ),
+        axis.title.y = element_text(
+                       size = 13))
 
 data %>%
   ggplot(aes(Bounce_Rate, fill = Theme)) +
   geom_histogram(color = 'black', bins = 30, alpha = 0.7) +
   scale_fill_manual(values = palette) +
   theme_minimal() +
-  labs(title = "Bounce Rate Distribution", x = "Bounce Rate", y = "Frequency")
+  labs(title = "Bounce Rate Distribution", x = "Bounce Rate", y = "Frequency") +
+   theme(plot.title = element_text(
+                     size = 16,
+                     face = "bold",
+                     color = "black",
+                     hjust = 0.4, vjust = 0.9,       # this Center the title
+                     margin = margin(t = 2, b = 15)), 
+        axis.title.x = element_text(
+                       size = 13
+                       ),
+        axis.title.y = element_text(
+                       size = 13))
 
-sd_histo <- data %>%
+
+data %>%
   ggplot(aes(Scroll_Depth, fill = Theme)) +
   geom_histogram(color = 'black', bins = 30, alpha = 0.7) +
   scale_fill_manual(values = palette) +
   theme_minimal() +
-  labs(title = "Scroll Depth Distribution", x = "Scroll Depth", y = "Frequency")
+  labs(title = "Scroll Depth Distribution", x = "Scroll Depth", y = "Frequency") +
+   theme(plot.title = element_text(
+                     size = 16,
+                     face = "bold",
+                     color = "black",
+                     hjust = 0.4, vjust = 0.9,       # this Center the title
+                     margin = margin(t = 2, b = 15)), 
+        axis.title.x = element_text(
+                       size = 13
+                       ),
+        axis.title.y = element_text(
+                       size = 13))
 
 data %>%
   ggplot(aes(Session_Duration, fill = Theme)) +
   geom_histogram(color = 'black', bins = 30, alpha = 0.7) +
   scale_fill_manual(values = palette) +
   theme_minimal() +
-  labs(title = "Session Duration Distribution", x = "Session Duration", y = "Frequency")
+  labs(title = "Session Duration Distribution", x = "Session Duration", y = "Frequency") +
+   theme(plot.title = element_text(
+                     size = 16,
+                     face = "bold",
+                     color = "black",
+                     hjust = 0.4, vjust = 0.9,       # this Center the title
+                     margin = margin(t = 2, b = 15)), 
+        axis.title.x = element_text(
+                       size = 13
+                       ),
+        axis.title.y = element_text(
+                       size = 13))
 
 # Arrange plots in a 2-column layout for better visualization
 #grid.arrange(ctr_histo, cr_histo, br_histo, sd_histo, ssd_histo, ncol = 2)
@@ -124,89 +182,70 @@ data %>%
 
 
 
-```{r}
-ctr_histo <- data %>%  ggplot(aes(Click_Through_Rate, fill = Theme)) +
-  geom_histogram( color = 'black') +
-  theme_hc() + 
-  labs(y = NULL)
-
-cr_histo <- data %>%  ggplot(aes(Conversion_Rate, fill =  Theme)) +
-  geom_histogram( color = 'black') +
-  theme_hc() + 
-  labs(y = NULL)
-
-br_histo <- data %>%  ggplot(aes(Bounce_Rate, fill = Theme)) +
-  geom_histogram(color = 'black') +
-  theme_hc() + 
-  labs(y = NULL)
-
-sd_histo <- data %>%  ggplot(aes(Scroll_Depth, fill = Theme)) +
-  geom_histogram(color = 'black') +
-  theme_hc() + 
-  labs(y = NULL)
-
-ssd_histo <- data %>%  ggplot(aes(Session_Duration, fill =  Theme)) +
-  geom_histogram(color = 'black') +
-  theme_hc() + 
-  labs(y = NULL)
-
-grid.arrange(ctr_histo, cr_histo, br_histo, sd_histo, ssd_histo, ncol = 3)
-```
 
 
 
 
 
 ```{r}
-data %>% ggplot(aes(Theme,Session_Duration, fill =  Theme)) +
-  geom_boxplot(orientation = 'x') +
-  stat_summary(fun= 'mean') +
-  theme_hc()
 
-
-data %>% ggplot(aes(Theme,Scroll_Depth, fill = Theme)) +
-  geom_boxplot(orientation = 'x') +
-  stat_summary(fun= 'mean') +
-  theme_hc()
-
-
-data %>% ggplot(aes(Theme,Conversion_Rate,fill = Theme)) +
-  geom_boxplot(orientation = 'x') +
-  stat_summary(fun= 'mean') +
-  theme_hc()
-
-
-
-
-
-
-
-
-```
-
-```{r}
-
-# Boxplot for Session Duration
+#Boxplot for Session Duration
 ggplot(data, aes(Theme, Session_Duration, fill = Theme)) +
   geom_boxplot(alpha = 0.7, show.legend = FALSE) +
   scale_fill_manual(values = palette) +
   theme_minimal() +
-  labs(title = "Session Duration by Theme", x = "Theme", y = "Session Duration")
+  labs(title = "Session Duration by Theme", x = "Theme", y = "Session Duration") +
+   theme(plot.title = element_text(
+                     size = 16,
+                     face = "bold",
+                     color = "black",
+                     hjust = 0.4, vjust = 0.9,       # this Center the title
+                     margin = margin(t = 2, b = 15)), 
+        axis.title.x = element_text(
+                       size = 13
+                       ),
+        axis.title.y = element_text(
+                       size = 13))
 
-# Boxplot for Scroll Depth
+#Boxplot for Scroll Depth
 ggplot(data, aes(Theme, Scroll_Depth, fill = Theme)) +
   geom_boxplot(alpha = 0.7, show.legend = FALSE) +
   scale_fill_manual(values = palette) +
   theme_minimal() +
-  labs(title = "Scroll Depth by Theme", x = "Theme", y = "Scroll Depth")
+  labs(title = "Scroll Depth by Theme", x = "Theme", y = "Scroll Depth") +
+  theme(plot.title = element_text(
+                     size = 16,
+                     face = "bold",
+                     color = "black",
+                     hjust = 0.4, vjust = 0.9,       # this Center the title
+                     margin = margin(t = 2, b = 15)), 
+        axis.title.x = element_text(
+                       size = 13
+                       ),
+        axis.title.y = element_text(
+                       size = 13 ))
 
-# Boxplot for Conversion Rate
+
+#Boxplot for Conversion Rate
+
 ggplot(data, aes(Theme, Conversion_Rate, fill = Theme)) +
   geom_boxplot(alpha = 0.7, show.legend = FALSE) +
   scale_fill_manual(values = palette) +
   theme_minimal() +
-  labs(title = "Conversion Rate by Theme", x = "Theme", y = "Conversion Rate")
+  labs(title = "Conversion Rate by Theme", x = "Theme", y = "Conversion Rate") +
+  theme(plot.title = element_text(
+                     size = 16,
+                     face = "bold",
+                     color = "black",
+                     hjust = 0.4, vjust = 0.9,       # this Centers the title
+                     margin = margin(t = 2, b = 15)), 
+        axis.title.x = element_text(
+                       size = 13
+                       ),
+        axis.title.y = element_text(
+                       size = 13 ))
 ```
+
 
 
 
@@ -216,7 +255,7 @@ ggplot(data, aes(Theme, Conversion_Rate, fill = Theme)) +
 data %>%  ggplot(aes(Purchases, fill = Theme)) +
   geom_bar(position = "dodge", width = 0.7, alpha = 0.7) +
   scale_fill_manual(values = palette) +
-  labs(title = "NUMBER OF PURCHASES BY THEME", x = "PURCHASES") +
+  labs(title = "NUMBER OF PURCHASES BY THEME", x = "Purchases") +
   geom_text(
            stat = "count", 
            aes(label = after_stat(count)),
@@ -231,7 +270,7 @@ data %>%  ggplot(aes(Purchases, fill = Theme)) +
                      margin = margin(t = 2, b = 15)), 
         axis.title.x = element_text(
                        size = 13,
-                       face = "bold"),
+                       ),
         axis.text.y = element_blank(),
         axis.ticks.y = element_blank(), #removes y axis properties
         axis.title.y = element_blank(), 
@@ -241,7 +280,7 @@ data %>%  ggplot(aes(Purchases, fill = Theme)) +
 data %>%  ggplot(aes(Added_to_Cart, fill = Theme)) +
   scale_fill_manual(values = palette) +
   geom_bar(position = "dodge", width = 0.7, alpha = 0.7) +
-  labs(title = "NUMBER OF CARTS ADDITION BY THEME",x = "ADDED TO CART") +
+  labs(title = "NUMBER OF CARTS ADDITION BY THEME",x = "Added to Cart") +
   geom_text(
            stat = "count", 
            aes(label = after_stat(count)),
@@ -256,7 +295,7 @@ data %>%  ggplot(aes(Added_to_Cart, fill = Theme)) +
                      margin = margin(t = 2, b = 15)), 
         axis.title.x = element_text(
                        size = 13,
-                       face = "bold"),
+                       ),
         axis.text.y = element_blank(),
         axis.ticks.y = element_blank(), 
         axis.title.y = element_blank(), 
@@ -306,6 +345,7 @@ cart_test <- prop.test(x = c(prop_dark_cart, prop_light_cart), n = c(n_dark_cart
 TEST FOR NORMALITY FOR SESSION DURATION AND SCROLL DEPTH
 
 ```{r}
+#shapiro wilk test fpr normality
 shapiro.test(light_theme_data$Session_Duration)
 shapiro.test(dark_theme_data$Session_Duration)
 
@@ -314,6 +354,7 @@ shapiro.test(dark_theme_data$Scroll_Depth)
 ```
 
 ```{r}
+#Q-Q plot check for normality
 qqnorm(light_theme_data$Session_Duration)
 qqline(light_theme_data$Session_Duration, col = "red")
 
@@ -322,6 +363,7 @@ qqline(dark_theme_data$Session_Duration, col = "red")
 ```
 
 ```{r}
+#wilcoxon test
 wilcox.test(light_theme_data$Session_Duration, dark_theme_data$Session_Duration, correct = TRUE)
 wilcox.test(light_theme_data$Scroll_Depth, dark_theme_data$Scroll_Depth,correct = FALSE)
 ```
